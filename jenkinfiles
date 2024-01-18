@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('clone') {
+            steps {
+               git branch: 'main', credentialsId: 'terraform', url: 'https://github.com/sachinaws744/project-maven-jenkins-CI-CD.git'
+            }
+        }
+        stage('test') {
+            steps {
+               sh 'mvn test'
+            }
+        }
+         stage('install') {
+            steps {
+               sh 'mvn install'
+            }
+        }
+        stage('Deploy') {
+            steps {
+               deploy adapters: [tomcat9(credentialsId: '4675990e-7869-4293-b4f3-05488e3371a6', path: '', url: 'http://15.206.147.242:8080')], contextPath: 'webapp', war: '**/*.war'
+            }
+        }
+    }
+}
